@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>myCup</title>
+		<style>
+			html, body {
+				height: 80%;
+			}
+ 
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				font-family: Helvetica, sans-serif;
+				overflow: hidden;
+			}
+
+			a {
+				color: #000000;
+			}
+
+			#info {
+				position: absolute;
+				top: 5%;
+				left: 5%;
+				right: 5%;
+				width: 80%;
+				color: #AA0000;
+				padding: 10px;
+				font-family: Helvetica, sans-serif;
+				font-size: 20px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 5;
+				
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 5%;
+				width: 100%;
+				text-align: center;
+        z-index: 10;
+			}
+			
+			.element {
+				width: 220px;
+				height:220px;
+				border-radius: 50%;
+				border:5px solid #aa5555;
+				overflow:hidden;
+    
+				box-shadow: 0 0 3px gray;
+			}
+
+			.element:hover {
+				background:#30588e;
+				box-shadow: 0px 0px 12px rgba(255,0,0,0.85);
+				border: 10px solid rgba(255,127,127,0.85);
+			}
+			
+			.element a {
+				display:block;
+				float:center;
+				width:10%;
+				//padding-top:50%;
+				//padding-bottom:50%;
+				line-height:1em;
+				//margin-top:-0.5em;
+    
+				text-align:center;
+				color:#f3eae2;
+				font-family:Verdana;
+				font-size:1.2em;
+				font-weight:bold;
+				text-decoration:none;
+				cursor: default;
+			}
+
+				.element .number {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 12px;
+					color: rgba(255,127,127,0.75);
+				}
+
+				.element .symbol {
+					position: absolute;
+					text-align: center;
+					top: 60px;
+					left: 80px;
+					right: 80px;
+					font-size: 60px;
+					font-weight: bold;
+					color: rgba(100,50,50,0.55);
+					text-shadow: 0 0 10px rgba(200,100,100,0.95);
+				}
+
+				
+				.element .details {
+					position: absolute;
+					bottom: 30px;
+					left: 80px;
+					right: 80px;
+					font-size: 40px;
+					color: rgba(155,27,27,0.75);
+				}
+				
+
+			button {
+				color: rgba(255,127,127,0.75);
+				background: transparent;
+				outline: 1px solid rgba(255,127,127,0.75);
+				border: 0px;
+				padding: 15px 20px;
+				cursor: pointer;
+				font-size: 40px;
+        
+			}
+			button:hover {
+				background-color: rgba(255,127,127,0.5);
+			}
+			button:active {
+				color: #000000;
+				background-color: rgba(155,0,0,0.75);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<div id="info">
+   <p>
+    8000 recycled cups - Only half the number used in a week by this office and many others like it. The Interactive Architecture Lab, UCL has installed this work to raise awareness and challenge you to think about the waste we produce everyday.
+   </p>
+   <p>
+Commissioned by Bank of America Merrill Lynch and their arts partner Create London
+   </p>
+		</div>
+		<form action="http://192.168.10.1/mycup.html">
+		<div id="menu">
+			<button id="play">play</button>
+			<!--<input type="submit" value="play">-->
+		</div>
+		</form>
+		<!--
+		A suspended sphere installation in the Bank of America Merrill Lynch lobby space 
+            by the Interactive Architecture Lab, which aims to restore waste responsability through awareness. 
+            It has a 3 metre diameter, and is made out of 270 (1 inch diameter) tubes, 220 metres in total length,
+            and a lot of plastic cups!
+		-->
+	</body>
+</html>
+

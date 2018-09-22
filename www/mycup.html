@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>myCup</title>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				font-family: Helvetica, sans-serif;
+				overflow: hidden;
+			}
+
+			a {
+				color: #000000;
+			}
+
+			#info {
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				color: #AA0000;
+				padding: 10px;
+				font-family: Helvetica, sans-serif;
+				font-size: 20px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1;
+				
+			}
+
+			#menu {
+				position: absolute;
+				top: 50px;
+				width: 100%;
+				text-align: center;
+			}
+			
+			.element {
+				width: 220px;
+				height:220px;
+				border-radius: 50%;
+				border:5px solid #aa5555;
+				overflow:hidden;
+    
+				box-shadow: 0 0 3px gray;
+			}
+
+			.element:hover {
+				background:#30588e;
+				box-shadow: 0px 0px 12px rgba(255,0,0,0.85);
+				border: 10px solid rgba(255,127,127,0.85);
+			}
+			
+			.element a {
+				display:block;
+				float:center;
+				width:10%;
+				//padding-top:50%;
+				//padding-bottom:50%;
+				line-height:1em;
+				//margin-top:-0.5em;
+    
+				text-align:center;
+				color:#f3eae2;
+				font-family:Verdana;
+				font-size:1.2em;
+				font-weight:bold;
+				text-decoration:none;
+				cursor: default;
+			}
+
+				.element .number {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 0px;
+					color: rgba(255,127,127,0.75);
+				}
+
+				.element .symbol {
+					position: absolute;
+					text-align: center;
+					top: 60px;
+					left: 80px;
+					right: 80px;
+					font-size: 0px;
+					font-weight: bold;
+					color: rgba(100,50,50,0.55);
+					text-shadow: 0 0 10px rgba(200,100,100,0.95);
+				}
+
+				
+				.element .details {
+					position: absolute;
+					bottom: 30px;
+					left: 80px;
+					right: 80px;
+					font-size: 0px;
+					color: rgba(155,27,27,0.75);
+				}
+				
+
+			button {
+				color: rgba(255,127,127,0.75);
+				background: transparent;
+				outline: 1px solid rgba(255,127,127,0.75);
+				border: 0px;
+				padding: 5px 10px;
+				cursor: pointer;
+        font-size: 20px;
+			}
+			button:hover {
+				background-color: rgba(255,127,127,0.5);
+			}
+			button:active {
+				color: #000000;
+				background-color: rgba(155,0,0,0.75);
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/libs/three.min.js"></script>
+		<script src="js/libs/tween.min.js"></script>
+		<script src="js/controls/TrackballControls.js"></script>
+		<script src="js/renderers/CSS3DRenderer.js"></script>
+
+		<div id="container"></div>
+		<div id="info">myCup</div>
+		<div id="menu">
+			<!--<button id="table">2d</button>-->
+			<!--<button id="sphere">3d</button>-->
+			<button id="max_button">on</button>
+      <button id="candle_button">candle</button>
+      <button id="off_button">off</button>
+			<!--<button id="night_button">night</button>-->
+			<!--<button id="day_button">day</button>-->
+			<!--<button id="sequence_button">sequence</button>-->
+			<!--<button id="pulsate_button">pulsate</button>-->
+			<!--<button id="random_button">random</button>-->
+		</div>
+		<!--
+		A suspended sphere installation in the Bank of America Merrill Lynch lobby space 
+            by the Interactive Architecture Lab, which aims to restore waste responsability through awareness. 
+            It has a 3 metre diameter, and is made out of 270 (1 inch diameter) tubes, 220 metres in total length,
+            and a lot of plastic cups!
+		-->
+		<script>
+
+			var table = [
+				 "1", "B1", "", 2, 1,
+				 "2", "B2", "", 2, 2,
+				 "3", "B3", "", 2, 3,
+				 "4", "C1", "", 3, 1,
+				 "5", "C2", "", 3, 2,
+				 "6", "C3", "", 3, 3,
+				 "9", "D1", "", 4, 1,
+				"10", "D2", "", 4, 2,
+				"11", "E1", "", 5, 1,
+				"12", "E2", "", 5, 2,
+				"13", "E3", "", 5, 3,
+				"14", "E4", "", 5, 4,
+				"15", "E5", "", 5, 5,
+				"16", "E6", "", 5, 6,
+				"17", "F1", "", 6, 1,
+				"18", "F2", "", 6, 2,
+				"19", "F3", "", 6, 3,
+				"20", "G1", "", 7, 1,
+				"21", "G2", "", 7, 2,
+				"22", "G3", "", 7, 3,
+				"23", "H2", "", 8, 2,
+				"24", "H3", "", 8, 3,
+				"25", "H1", "", 8, 1,
+				"26", "A1", "", 1, 1,
+				"27", "A2", "", 1, 2,
+				"28", "A3", "", 1, 3,
+				"29", "A4", "", 1, 4,
+				"30", "A5", "", 1, 5,
+				"31", "A6", "", 1, 6
+			];
+
+			/*
+			var table = [
+				 "1", "B1", "", 2, 1,
+				 "2", "B2", "", 2, 2,
+				 "3", "B3", "", 2, 3,
+				 "4", "C1", "", 3, 1
+			];
+			*/
+
+			
+			var camera, scene, renderer;
+			var controls;
+			var repeater;
+
+			var objects = [];
+			var targets = { table: [], sphere: [], helix: [], grid: [] };
+
+			init();
+			animate();
+
+			function init() {
+
+
+        //websocket = new WebSocket("ws://192.168.1.165:8000/"); 
+        websocket = new WebSocket("ws://192.168.10.1:8000/");
+				websocket.onopen = function(evt) { onOpen(evt) };
+				websocket.onclose = function(evt) { onClose(evt) };
+				websocket.onmessage = function(evt) { onMessage(evt) };
+				websocket.onerror = function(evt) { onError(evt) };
+
+			
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 3000;
+
+				scene = new THREE.Scene();
+
+				// table
+
+				for ( var i = 0; i < table.length; i += 5 ) {
+
+					var element = document.createElement( 'div' );
+					element.className = 'element';
+					element.setAttribute('id', table[i]);
+					//element.style.backgroundColor = 'rgba(127,0,0,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+					element.style.backgroundColor = 'rgba(127,0,0,0.5)';
+					//element.addEventListener('mouseover', doSendStandardMessage, false);
+					console.log(table[i])
+					//element.addEventListener('mouseover', function(){sendText(table[ i ]);}, false);
+					element.addEventListener('mouseover', sendLightText, false);
+					//function(){sendText(table[ i ])}
+					//item.addEventListener("mouseout", func1, false);
+	
+					var number = document.createElement( 'div' );
+					number.className = 'number';
+					number.textContent = (i/5) + 1;
+					element.appendChild( number );
+
+					var symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = table[ i ];
+					element.appendChild( symbol );
+
+					var details = document.createElement( 'div' );
+					details.className = 'details';
+					details.innerHTML = table[ i + 1 ] + '<br>' + table[ i + 2 ];
+					element.appendChild( details );
+
+					var object = new THREE.CSS3DObject( element );
+					object.position.x = Math.random() * 4000 - 2000;
+					object.position.y = Math.random() * 4000 - 2000;
+					object.position.z = Math.random() * 4000 - 2000;
+					scene.add( object );
+
+					objects.push( object );
+
+					//
+
+					var object = new THREE.Object3D();
+					object.position.x = ( table[ i + 3 ] * 240 ) - 1330;
+					object.position.y = - ( table[ i + 4 ] * 240 ) + 990;
+
+					targets.table.push( object );
+
+				}
+
+				// sphere
+
+				var vector = new THREE.Vector3();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var phi = Math.acos( -1 + ( 2 * i ) / l );
+					var theta = Math.sqrt( l * Math.PI ) * phi;
+
+					var object = new THREE.Object3D();
+
+					object.position.x = 600 * Math.cos( theta ) * Math.sin( phi );
+					object.position.y = 600 * Math.sin( theta ) * Math.sin( phi );
+					object.position.z = 600 * Math.cos( phi );
+
+					vector.copy( object.position ).multiplyScalar( 2 );
+
+					object.lookAt( vector );
+
+					targets.sphere.push( object );
+
+				}
+
+				// helix
+
+				var vector = new THREE.Vector3();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var phi = i * 0.175 + Math.PI;
+
+					var object = new THREE.Object3D();
+
+					object.position.x = 900 * Math.sin( phi );
+					object.position.y = - ( i * 8 ) + 450;
+					object.position.z = 900 * Math.cos( phi );
+
+					vector.x = object.position.x * 2;
+					vector.y = object.position.y;
+					vector.z = object.position.z * 2;
+
+					object.lookAt( vector );
+
+					targets.helix.push( object );
+
+				}
+
+				// grid
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = new THREE.Object3D();
+
+					object.position.x = ( ( i % 5 ) * 400 ) - 800;
+					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+					object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+
+					targets.grid.push( object );
+
+				}
+
+				//
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//
+
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 0.5;
+				controls.minDistance = 500;
+				controls.maxDistance = 6000;
+				controls.addEventListener( 'change', render );
+        controls.addEventListener( 'touchmove', function ( event ) {
+					sendText( 'random' );
+          console.log('random');
+				}, false );
+
+/*
+				var button = document.getElementById( 'table' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.table, 1000 );
+
+				}, false );
+
+
+				var button = document.getElementById( 'sphere' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.sphere, 1000 );
+
+
+				}, false );
+*/
+
+				/*
+				var button = document.getElementById( 'helix' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.helix, 2000 );
+
+				}, false );
+
+				var button = document.getElementById( 'grid' );
+				button.addEventListener( 'click', function ( event ) {
+
+					transform( targets.grid, 2000 );
+
+				}, false );
+				*/
+				
+				var button = document.getElementById( 'max_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'max' );
+				}, false );
+
+				var button = document.getElementById( 'off_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'off' );
+				}, false );
+
+        /*
+				var button = document.getElementById( 'night_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'night' );
+				}, false );
+				
+				var button = document.getElementById( 'day_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'day' );
+				}, false );
+				
+				var button = document.getElementById( 'pulsate_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'pulsate' );
+				}, false );
+				
+				var button = document.getElementById( 'random_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'random' );
+				}, false );
+
+				var button = document.getElementById( 'sequence_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'sequence' );
+				}, false );
+*/
+				var button = document.getElementById( 'candle_button' );
+				button.addEventListener( 'click', function ( event ) {
+					sendText( 'candle' );
+				}, false );
+
+				
+				transform( targets.sphere, 2000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function transform( targets, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				render();
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				
+				//object.material.color.setHex(0xff0000);
+
+				TWEEN.update();
+
+				controls.update();
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+			
+
+			function onOpen(evt) {
+				//writeToScreen("connected\n");
+				//document.myform.connectButton.disabled = true;
+				//document.myform.disconnectButton.disabled = false;
+			}
+
+			function onClose(evt) {
+				//writeToScreen("disconnected\n");
+				//document.myform.connectButton.disabled = false;
+				//document.myform.disconnectButton.disabled = true;
+			}
+
+			function onMessage(evt)	{
+				//writeToScreen("response: " + evt.data + '\n');
+				console.log(evt.data);
+			}
+
+			function onError(evt) {
+				//writeToScreen('error: ' + evt.data + '\n');
+				websocket.close();
+				//document.myform.connectButton.disabled = false;
+				//document.myform.disconnectButton.disabled = true;
+			}
+
+			function doSend(websocket, message) {
+				//writeToScreen("sent: " + message + '\n'); 
+				websocket.send(message);
+			}
+			
+			function doSendStandardMessage(evt) {
+				websocket.send('off');
+			}
+
+			function writeToScreen(message) {
+				//document.myform.outputtext.value += message
+				//document.myform.outputtext.scrollTop = document.myform.outputtext.scrollHeight;
+			}
+
+			//window.addEventListener("load", init, false);
+
+
+			function sendText(message) {
+				//doSend( document.myform.inputtext.value );
+				websocket.send(message);
+				console.log(message);
+			}
+			
+			function sendLightText(e){
+				var e=e? e : window.event;
+				var el=e.target? e.target : e.srcElement;
+				sendText(el.id);
+			}
+
+
+			function doDisconnect() {
+				websocket.close();
+			}
+
+
+		</script>
+	</body>
+</html>
+
+<!--
+Websocket stuff
+
+ function init()
+  {
+	document.myform.url.value = "ws://localhost:8000/"
+	document.myform.inputtext.value = "Hello World!"
+	document.myform.disconnectButton.disabled = true;
+  }
+
+  function doConnect()
+  {
+    websocket = new WebSocket(document.myform.url.value); // "ws://localhost:8000/"
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+
+  function onOpen(evt)
+  {
+    writeToScreen("connected\n");
+	document.myform.connectButton.disabled = true;
+	document.myform.disconnectButton.disabled = false;
+  }
+
+  function onClose(evt)
+  {
+    writeToScreen("disconnected\n");
+	document.myform.connectButton.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+  }
+
+  function onMessage(evt)
+  {
+    writeToScreen("response: " + evt.data + '\n');
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('error: ' + evt.data + '\n');
+
+	websocket.close();
+
+	document.myform.connectButton.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("sent: " + message + '\n'); 
+    websocket.send(message);
+  }
+
+  function writeToScreen(message)
+  {
+    document.myform.outputtext.value += message
+	document.myform.outputtext.scrollTop = document.myform.outputtext.scrollHeight;
+
+  }
+
+  window.addEventListener("load", init, false);
+
+
+   function sendText() {
+		doSend( document.myform.inputtext.value );
+   }
+
+  function clearText() {
+		document.myform.outputtext.value = "";
+   }
+
+   function doDisconnect() {
+		websocket.close();
+   }
+
+
+
+-->
